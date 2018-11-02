@@ -9,12 +9,17 @@ __all__ = ["Snippet", "SnippetContainerBase"]
 
 class SnippetBase(object):
   __metaclass__ = ABCMeta
-  __template_name__ = None
+  __core_template_name__ = None
   __headers__ = None
 
+  # Optional
+  __var_decls_template__ = None
+  __var_create_template__ = None
+  __var_destroy_template__ = None
+
   def __init__(self):
-    if self.__template_name__ is None:
-      raise ValueError('No {}.__template_name__ not defined'.format(type(self)))
+    if self.__core_template_name__ is None:
+      raise ValueError('No {}.__core_template_name__ not defined'.format(type(self)))
     if self.__headers__ is None:
       raise ValueError('No {}.__headers__ not defined'.format(type(self)))
     if not isinstance(self.__headers__, set):
@@ -23,13 +28,31 @@ class SnippetBase(object):
 
   @property
   def template_name(self):
-    return self.__template_name__
+    return self.__core_template_name__
 
   @property
   def template(self):
-    if self.__template_name__ is None:
-      raise ValueError('No template name: please override class attribute __template_name__')
-    return _env.get_template(self.__template_name__)
+    if self.__core_template_name__ is None:
+      raise ValueError('No template name: please override class attribute __core_template_name__')
+    return _env.get_template(self.__core_template_name__)
+  
+  @property
+  def vars_decls_template(self):
+    if self.__var_decls_template__ is None:
+      raise ValueError('No template name: please override class attribute __var_decls_template__')
+    return _env.get_template(self.__var_decls_template__)
+  
+  @property
+  def vars_create_template(self):
+    if self.__var_create_template__ is None:
+      raise ValueError('No template name: please override class attribute __var_create_template__')
+    return _env.get_template(self.__var_create_template__)
+  
+  @property
+  def vars_destroy_template(self):
+    if self.__var_destroy_template__ is None:
+      raise ValueError('No template name: please override class attribute __var_destroy_template__')
+    return _env.get_template(self.__var_destroy_template__)
 
   @property
   def headers(self):
@@ -48,6 +71,12 @@ class Snippet(SnippetBase):  # pylint: W0223
 
   def render(self):
     return self.template.render(**self.template_vars)
+  def render_vars_decls(self):
+    return self.vars_decls_template.render(**self.template_vars)
+  def render_vars_create(self):
+    return self.vars_create_template.render(**self.template_vars)
+  def render_vars_destroy(self):
+    return self.vars_destroy_template.render(**self.template_vars)
 
 
 class SnippetContainerBase(SnippetBase):

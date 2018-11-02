@@ -1,5 +1,6 @@
 # -*- coding:utf8 -*-
 import numpy as np
+import re
 
 from ._base import Snippet, SnippetContainerBase  # pylint: disable=W0611
 from ._types import NP_TYPES_MAP
@@ -17,6 +18,13 @@ __all__ = ["Snippet", "SnippetContainerBase",
            "ContextSnippetsContainer", "QuantizedAddOpSnippet",
            "CreateTensorBinarySnippet", "WeightSnippet",
            "ContextGlobalArrayContainer"]
+
+def cpp_sanitize_name(string):
+    """let us do variable names properly"""
+    return re.sub(r"[/:-]", "_", string)
+
+def cpp_sanitize_names(stringlist):
+    return list(map(cpp_sanitize_name, stringlist))
 
 # TODO: Better abstraction, i.e a better backend for code generation
 class CreateTensorIdxSnippet(Snippet):
@@ -141,9 +149,12 @@ class AddOpSnippet(Snippet):
       self.template_vars["ref_count"] = ref_count
     self.template_vars["in_dtype"] = NP_TYPES_MAP[np_dtype].tensor_type_str
     self.template_vars["out_dtype"] = NP_TYPES_MAP[np_dtype].tensor_type_str
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
     self.template_vars["inputs"] = inputs
     self.template_vars["output"] = output
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = [cpp_sanitize_name(output)]
 
 
 class MinOpSnippet(Snippet):
@@ -160,8 +171,11 @@ class MinOpSnippet(Snippet):
     self.template_vars["inputs"] = inputs
     self.template_vars["output"] = output
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
     self.template_vars["out_shape"] = out_shape
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = [cpp_sanitize_name(output)]
 
 
 class MaxOpSnippet(Snippet):
@@ -178,8 +192,11 @@ class MaxOpSnippet(Snippet):
     self.template_vars["inputs"] = inputs
     self.template_vars["output"] = output
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
     self.template_vars["out_shape"] = out_shape
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = [cpp_sanitize_name(output)]
 
 
 class QuantizedMaxPoolSnippet(Snippet):
@@ -209,6 +226,9 @@ class QuantizedMaxPoolSnippet(Snippet):
     self.template_vars["row_stride"] = row_stride
     self.template_vars["padding"] = padding
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
+    self.template_vars["out_dtypes"] = [self.template_vars["dtype"]]
 
 
 class ArgMaxOpSnippet(Snippet):
@@ -226,6 +246,9 @@ class ArgMaxOpSnippet(Snippet):
     self.template_vars["in_dtype"] = NP_TYPES_MAP[in_dtype].tensor_type_str
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = [cpp_sanitize_name(output)]
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
 
 
 class DequantizeOpSnippet(Snippet):
@@ -242,6 +265,9 @@ class DequantizeOpSnippet(Snippet):
     self.template_vars["output"] = output
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = [cpp_sanitize_name(output)]
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
 
 
 class QuantizedMatMulOpSnippet(Snippet):
@@ -267,6 +293,9 @@ class QuantizedMatMulOpSnippet(Snippet):
     self.template_vars["w_dtype"] = NP_TYPES_MAP[w_dtype].tensor_type_str
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
 
 
 class QuantizedAddOpSnippet(Snippet):
@@ -293,6 +322,9 @@ class QuantizedAddOpSnippet(Snippet):
     self.template_vars["w_dtype"] = NP_TYPES_MAP[w_dtype].tensor_type_str
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
 
 
 class QuantizeV2OpSnippet(Snippet):
@@ -314,6 +346,9 @@ class QuantizeV2OpSnippet(Snippet):
     self.template_vars["outputs"] = outputs
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
 
 
 class QuantizedReluOpSnippet(Snippet):
@@ -337,6 +372,8 @@ class QuantizedReluOpSnippet(Snippet):
     self.template_vars["qout_dtype"] = NP_TYPES_MAP[qout_dtype].tensor_type_str
     self.template_vars["ref_counts"] = ref_counts
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
 
 
 class RequantizationRangeOpSnippet(Snippet):
@@ -358,6 +395,9 @@ class RequantizationRangeOpSnippet(Snippet):
     self.template_vars["out_dtype"] = NP_TYPES_MAP[out_dtype].tensor_type_str
     self.template_vars["ref_counts"] = ref_counts
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
+    self.template_vars["out_dtypes"] = [self.template_vars["out_dtype"]]
 
 
 class RequantizeOpSnippet(Snippet):
@@ -384,6 +424,9 @@ class RequantizeOpSnippet(Snippet):
     self.template_vars["range_dtype"] = NP_TYPES_MAP[range_dtype].tensor_type_str
     self.template_vars["ref_counts"] = ref_counts
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
+    self.template_vars["out_dtypes"] = [self.template_vars["qout_dtype"]]
 
 
 class ReshapeOpSnippet(Snippet):
@@ -399,6 +442,9 @@ class ReshapeOpSnippet(Snippet):
     self.template_vars["inputs"] = inputs
     self.template_vars["output"] = output
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = [cpp_sanitize_name(output)]
+    self.template_vars["out_dtypes"] = ["float"]
 
 
 class QuantizedReshapeOpSnippet(Snippet):
@@ -414,6 +460,8 @@ class QuantizedReshapeOpSnippet(Snippet):
     self.template_vars["inputs"] = inputs
     self.template_vars["outputs"] = outputs
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
 
 
 class Conv2DOpSnippent(Snippet):
@@ -440,6 +488,8 @@ class Conv2DOpSnippent(Snippet):
     self.template_vars["padding"] = padding
     self.template_vars["ref_counts"] = ref_counts
     self.template_vars["to_eval"] = to_eval
+    self.template_vars["input_vars"] = cpp_sanitize_names(inputs)
+    self.template_vars["output_vars"] = cpp_sanitize_names(outputs)
 
 
 class CommentSnippet(Snippet):
