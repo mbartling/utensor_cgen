@@ -1,8 +1,14 @@
 
 {{graph_name}}::{{graph_name}}() {
+  {{% for snippet in snippets %}
+  {{snippet.render_vars_create()}}
+  {{% endfor %}}
 
 }
 {{graph_name}}::~{{graph_name}}() {
+  {{% for snippet in snippets %}
+  {{snippet.render_vars_destroy()}}
+  {{% endfor %}}
 
 }
 
@@ -20,4 +26,8 @@ void {{graph_name}}::infer() {
 {% for snippet in snippets%}
 {{snippet.render()}}
 {% endfor %}
+}
+
+Context& {{graph_name}}::get_ctx(void) {
+  return ctx;
 }

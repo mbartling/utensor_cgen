@@ -3,11 +3,11 @@
 
 class {{graph_name}} : /*public uTensorModel*/ {
   private:
-    {% for snippet in snippets%}
-    {% for (outputvar, output_dtype) in zip(snippet.template_vars["output_vars"], snippet.template_vars["out_dtypes"]) %}
-    RamTensor<output_dtype>* outputvar;
+    {% for snippet in snippets %}
+    {{snippet.render_vars_decls()}}
     {% endfor %}
-    {% endfor %}
+
+    Context ctx;
 
   public:
   
