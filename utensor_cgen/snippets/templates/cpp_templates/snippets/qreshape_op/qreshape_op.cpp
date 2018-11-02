@@ -1,12 +1,12 @@
 {
-    {% if ref_counts%}
-    ctx.add(new RamTensor<uint8_t>(), "{{outputs[0]}}", {{ref_counts[0]}});
-    ctx.add(new RamTensor<float>({1}), "{{outputs[1]}}", {{ref_counts[1]}});
-    ctx.add(new RamTensor<float>({1}), "{{outputs[2]}}", {{ref_counts[2]}});
+    {% if ref_counts %}
+    ctx.add({{output_vars[0]}}, "{{outputs[0]}}", {{ref_counts[0]}});
+    ctx.add({{output_vars[1]}}, "{{outputs[1]}}", {{ref_counts[1]}});
+    ctx.add({{output_vars[2]}}, "{{outputs[2]}}", {{ref_counts[2]}});
     {% else %}
-    ctx.add(new RamTensor<uint8_t>(), "{{outputs[0]}}");
-    ctx.add(new RamTensor<float>({1}), "{{outputs[1]}}");
-    ctx.add(new RamTensor<float>({1}), "{{outputs[2]}}");
+    ctx.add({{output_vars[0]}}, "{{outputs[0]}}");
+    ctx.add({{output_vars[1]}}, "{{outputs[1]}}");
+    ctx.add({{output_vars[2]}}, "{{outputs[2]}}");
     {% endif %}
     ctx.push(new QuantizedReshapeOp(),
               { {%for tname in inputs[:-1] %}"{{tname}}", {%endfor%}"{{inputs[-1]}}" },

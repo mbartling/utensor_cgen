@@ -1,0 +1,5 @@
+    {% if out_shape %}
+    {{output_vars[0]}} = new RamTensor<{{out_dtype}}>({ {%for shape in out_shape[:-1]%}{{shape}}, {%endfor%}{{out_shape[-1]}} });
+    {% else %}
+    {{output_vars[0]}} = new RamTensor<{{out_dtype}}>();
+    {% endif %}

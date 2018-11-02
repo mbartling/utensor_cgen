@@ -1,0 +1,3 @@
+    RamTensor<{{qout_dtype}}>* {{output_vars[0]}};
+    RamTensor<{{out_dtypes[0]}}>* {{output_vars[1]}};
+    RamTensor<{{out_dtypes[1]}}>* {{output_vars[2]}};

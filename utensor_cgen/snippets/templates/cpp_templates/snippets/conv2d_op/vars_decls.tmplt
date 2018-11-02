@@ -1,0 +1,3 @@
+    {% for (t_out_dtype, output_var) in zip(out_dtypes, output_vars) %}
+    RamTensor<{{t_out_dtype}}>* {{output_var}};
+    {% endfor %}

@@ -1,0 +1,3 @@
+    {{output_vars[0]}} = new RamTensor<{{dtype}}>();
+    {{output_vars[1]}} = new RamTensor<float>({1});
+    {{output_vars[2]}} = new RamTensor<float>({1});

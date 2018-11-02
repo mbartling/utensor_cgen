@@ -3,9 +3,9 @@ S_TENSOR {{sptr_name}};
 {% endif %}
 {
     {% if ref_count %}
-    ctx.add(new RamTensor<float>(), "{{output}}", {{ref_count}});
+    ctx.add({{output_vars[0]}}, "{{output}}", {{ref_count}});
     {% else %}
-    ctx.add(new RamTensor<float>(), "{{output}}");
+    ctx.add({{output_vars[0]}}, "{{output}}");
     {% endif %}
     ctx.push(new ReshapeOp(), 
              { {% for tname in inputs[:-1]%}"{{tname}}", {%endfor%}"{{inputs[-1]}}" },

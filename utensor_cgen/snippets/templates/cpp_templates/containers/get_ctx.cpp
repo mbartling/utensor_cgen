@@ -1,3 +1,11 @@
+
+{{graph_name}}::{{graph_name}}() {
+
+}
+{{graph_name}}::~{{graph_name}}() {
+
+}
+
 {%if placeholders%}
 void {{graph_name}}::infer({%for ph in placeholders%}Tensor* input_{{loop.index0}}{%if not loop.last %},{%endif%}{%endfor%}) {
 
