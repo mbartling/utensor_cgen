@@ -1,7 +1,6 @@
 {% if create_sptr %}
 S_TENSOR {%for sptr_name in sptr_names[:-1]%}{{sptr_name}}, {%endfor%} {{sptr_names[-1]}};
 {% endif %}
-{
     {% if ref_counts %}
     ctx.add({{output_vars[0]}}, "{{outputs[0]}}", {{ref_counts[0]}});
     ctx.add({{output_vars[1]}}, "{{outputs[1]}}", {{ref_counts[1]}});
@@ -25,4 +24,3 @@ S_TENSOR {%for sptr_name in sptr_names[:-1]%}{{sptr_name}}, {%endfor%} {{sptr_na
     {% if to_eval %}
     ctx.eval();
     {% endif %}
-}

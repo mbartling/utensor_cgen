@@ -1,4 +1,3 @@
-{
     {% if ref_counts %}
     ctx.add({{output_vars[0]}}, "{{outputs[0]}}", {{ref_counts[0]}});
     ctx.add({{output_vars[1]}}, "{{outputs[1]}}", {{ref_counts[1]}});
@@ -14,4 +13,3 @@
     {%if to_eval%}
     ctx.eval();
     {%endif%}
-}
