@@ -7,6 +7,7 @@ from .ns_transformer import (BatchNormTransformer, DropoutTransformer,
                              FakeGatherV2Transformer)
 from .optimizer import IdOpRemoveOptimizer, RefCntOptimizer
 from .quantize import QuantizeTransformer
+from .uquantize import UQuantizeTransformer
 from .graph_viz import GraphVizTransformer
 from .linear_reoder import Linear_Reorder_Transformer
 from .conv_pool import CONV_POOL_Transformer
@@ -17,6 +18,7 @@ class TransformerPipeline(object):
     RefCntOptimizer.METHOD_NAME: RefCntOptimizer,
     DropoutTransformer.METHOD_NAME: DropoutTransformer,
     BatchNormTransformer.METHOD_NAME: BatchNormTransformer,
+    UQuantizeTransformer.METHOD_NAME: UQuantizeTransformer,
     QuantizeTransformer.METHOD_NAME: QuantizeTransformer,
     InlineTransformer.METHOD_NAME: InlineTransformer,
     BiasAddTransformer.METHOD_NAME: BiasAddTransformer,
