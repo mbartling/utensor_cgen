@@ -79,7 +79,7 @@ def sanitize_name(n):
 
 def add_op_to_viz(g, op):
     g.attr('node', shape='ellipse')
-    g.node(sanitize_name(op.name), label=op.op_type)
+    g.node(sanitize_name(op.name), label="%s\n%s" % (op.op_type, sanitize_name(op.name)))
     g.attr('node', shape='box')
     for input_tensor in op.input_tensors:
         g.edge(sanitize_name(input_tensor.name), sanitize_name(op.name), len="1.0")
@@ -115,7 +115,7 @@ class UQuantizeTransformer(Transformer):
             # Constants only have one output tensor
             for output_tensor in output_tensors:
                 output_tensor.ugraph=mugraph
-                output_tensor.name += "_t"
+                #output_tensor.name += "_t"
             input_tensors = op.input_tensors
             for input_tensor in input_tensors:
                 input_tensor.ugraph=mugraph
@@ -136,7 +136,7 @@ class UQuantizeTransformer(Transformer):
             op_attr['value'].value.np_array = np.array([min_range], dtype=np.float32)
             op_attr['value'].value.dtype = np.dtype(np.float32)
             tshape = op_attr['value'].value.np_array.shape
-            outTensor = TensorInfo(name="%s_min_t" % op.output_tensors[0].name,
+            outTensor = TensorInfo(name="%s_min" % op.output_tensors[0].name,
                                    ugraph=mugraph,
                                    op_name="%s_min" % op.name,
                                    dtype=np.dtype(np.float32),
@@ -155,7 +155,7 @@ class UQuantizeTransformer(Transformer):
             op_attr['value'].value.np_array = np.array([max_range], dtype=np.float32)
             op_attr['value'].value.dtype = np.dtype(np.float32)
             tshape = op_attr['value'].value.np_array.shape
-            outTensor = TensorInfo(name="%s_max_t" % op.output_tensors[0].name,
+            outTensor = TensorInfo(name="%s_max" % op.output_tensors[0].name,
                                    ugraph=mugraph,
                                    op_name="%s_max" % op.name,
                                    dtype=np.dtype(np.float32),
@@ -186,7 +186,7 @@ class UQuantizeTransformer(Transformer):
                         shape = [1]
 
                     quantized_tensors.append(output_tensor.name)
-                    output_tensors.append(TensorInfo(name="%s%s_t" % (output_tensor.name, qual),
+                    output_tensors.append(TensorInfo(name="%s%s" % (output_tensor.name, qual),
                                                      ugraph=mugraph,
                                                      op_name="%s" % op.name,
                                                      dtype=dtype,
@@ -200,10 +200,13 @@ class UQuantizeTransformer(Transformer):
                     else:
                         dtype = np.dtype(np.float32)
                         shape = [1]
+                    op_name = input_tensor.op.name
+                    if input_tensor.op.name == "Const":
+                        op_name = "%s%s" % ( input_tensor.op.name, qual)
 
-                    input_tensors.append(TensorInfo(name="%s%s_t" % (input_tensor.name, qual),
+                    input_tensors.append(TensorInfo(name="%s%s" % (input_tensor.name, qual),
                                                      ugraph=mugraph,
-                                                     op_name="%s" % op.name,
+                                                     op_name=op_name,
                                                      dtype=dtype,
                                                      shape=shape))
 
@@ -237,8 +240,8 @@ class UQuantizeTransformer(Transformer):
                 output_tensor.ugraph=mugraph
             input_tensors = op.input_tensors
             for input_tensor in input_tensors:
-                if input_tensor.name in quantized_tensors:
-                    input_tensor.name += "_t"
+                #if input_tensor.name in quantized_tensors:
+                #    input_tensor.name += "_t"
                 input_tensor.ugraph=mugraph
             opC = OperationInfo(name=op.name,
                                 input_tensors=input_tensors,
