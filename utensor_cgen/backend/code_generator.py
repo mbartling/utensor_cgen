@@ -15,7 +15,7 @@ from utensor_cgen.transformer.optimizer import RefCntOptimizer
 from utensor_cgen.transformer.pipline import TransformerPipeline
 from utensor_cgen.utils import NamescopedKWArgsParser
 
-from .operators import OperatorFactory
+from .operators import OperatorFactory, prepare_string_ref_name, add_tensor_string_reference
 from .snippets import (CommentSnippet, ContextGlobalArrayContainer,
                        ContextHeaderSnippet, ContextSnippetsContainer,
                        CreateTensorBinarySnippet, CreateTensorIdxSnippet)
@@ -81,8 +81,8 @@ class CodeGenerator(object):
     )
     quant_ugraph = self._transform_graph(ugraph,
                                          self.trans_methods)
-    from utensor_cgen.ir.misc.graph_viz import viz_graph
-    viz_graph('out_graph', True, quant_ugraph)
+    #from utensor_cgen.ir.misc.graph_viz import viz_graph
+    #viz_graph('out_graph', True, quant_ugraph)
     _logger.info('Graph transormation done')
 
     if self.save_graph:
@@ -99,11 +99,12 @@ class CodeGenerator(object):
       if op_type == "Placeholder":
         parser = NamescopedKWArgsParser(RefCntOptimizer.KWARGS_NAMESCOPE, 
                                         op_info.op_attr)
-        out_tname = op_info.output_tensors[0].name
+        out_tname = prepare_string_ref_name(op_info.output_tensors[0].name)
         ref_count = parser.get('ref_counts', [0])[0]
         container.template_vars["placeholders"].append(out_tname)
         container.template_vars["ref_counts"].append(ref_count)
         header_snippet.template_vars["placeholders"].append(out_tname)
+        #add_tensor_string_reference(out_tname)
       else:
         # TODO: the operator may correspond to multiple snippets (such as InlinTensor)
         # weight_container is passed to function for workaround

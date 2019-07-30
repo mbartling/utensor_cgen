@@ -23,5 +23,11 @@ NP_TYPES_MAP = {
                                                       tensor_type_str="uint16_t"),
   np.dtype('int8'): _TYPE_MAP_VALUE(importer_type_str="int8",
                                                       tensor_type_str="q7_t"),
+  np.dtype(np.uint8): _TYPE_MAP_VALUE(importer_type_str="byte", 
+                                                     tensor_type_str="uint8_t"),
+  np.dtype(np.uint32): _TYPE_MAP_VALUE(importer_type_str="int", 
+                                                     tensor_type_str="int"),
+  np.dtype(np.int32): _TYPE_MAP_VALUE(importer_type_str="int", 
+                                                     tensor_type_str="int"),
 }
 del _TYPE_MAP_VALUE

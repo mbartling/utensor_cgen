@@ -3,7 +3,7 @@ void get_{{graph_name}}_ctx(Context& ctx, {%for ph in placeholders%}Tensor* inpu
 
 { // add tensor for placeholders
     {% for ph, ref_count in zip(placeholders, ref_counts) %}
-    ctx.add(input_{{loop.index0}}, "{{ph}}", {{ref_count}});
+    ctx.add(input_{{loop.index0}}, {{ph}}, {{ref_count}});
     {% endfor %}
 }
 {% else %}
